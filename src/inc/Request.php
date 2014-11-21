@@ -1,10 +1,13 @@
 <?php
 
+// @TODO Remove once JOINDIN-512 is complete
+require_once(__DIR__ . '../services/SpamCheckService/User.php');
+
 /*
  * Request object
  */
 
-class Request
+class Request implements SpamCheckService_User
 {
     /**
      * @var string HTTP verb
@@ -93,6 +96,22 @@ class Request
         }
         $this->clientIP        = $ipAddress;
         $this->clientUserAgent = $userAgent;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUserAgent()
+    {
+        return $this->clientUserAgent;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUserIp()
+    {
+        return $this->clientIP;
     }
 
     /**
@@ -189,7 +208,7 @@ class Request
      */
     public function identifyUser($db, $auth_header)
     {
-        if(($this->getScheme() == "https://") || 
+        if(($this->getScheme() == "https://") ||
             (isset($this->config['mode']) && $this->config['mode'] == "development")) {
 
             // identify the user

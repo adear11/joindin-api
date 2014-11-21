@@ -1,5 +1,8 @@
 <?php
 
+// @TODO Remove once JOINDIN-512 is complete
+require_once(__DIR__ . '/SpamCheckService/User.php');
+
 /**
  * A class that lets you check against an external service (Akismet)
  * for spam in your content
@@ -21,15 +24,15 @@ class SpamCheckService
      *
      * @return Boolean true if the comment is okay, false if it got rated as spam
      */
-    public function isCommentAcceptable($data,$userIp,$userAgent) {
+    public function isCommentAcceptable($data, SpamCheckService_User $user) {
         $comment = array();
 
         // set some required fields
         $comment['blog'] = 'http://joind.in';
 
         // TODO what are better values to use for these required fields?
-        $comment['user_ip']    = $userIp;
-        $comment['user_agent'] = $userAgent;
+        $comment['user_ip']    = $user->getUserIp();
+        $comment['user_agent'] = $user->getUserAgent();
 
         // now use the incoming data
         $comment['comment_content'] = $this->getField("comment", $data);
